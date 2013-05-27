@@ -1,12 +1,12 @@
 # Fluent-style Custom Post Type for Wordpress
-A simple [http://en.wikipedia.org/wiki/Fluent_interface](fluent API wrapper)
+A simple [fluent API wrapper](http://en.wikipedia.org/wiki/Fluent_interface)
 for creating custom post types in Wordpress.
 
 ## Installing
 All functionality is contained in the `CustomPostType` class in the
 `CustomPostType.php` file. You can either copy it into an included class path
 directory and use an
-[http://php.net/manual/en/language.oop5.autoload.php](autoloader) or simply use
+[autoloader](http://php.net/manual/en/language.oop5.autoload.php) or simply use
 a `require_once()` call in your PHP file.
 
 ## Usage
