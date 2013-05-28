@@ -1,5 +1,4 @@
-<?php
-namespace bvalosek;
+<?php namespace bvalosek;
 
 // Easily create Wordpress custom types with a fluent, chainable API
 class CustomPostType
@@ -45,7 +44,16 @@ class CustomPostType
     // actually execute all the stuff we've found
     public function create()
     {
-        $slug = $this->slug;
+        // setup the post type itself
+        add_action('init', array($this, 'handle_wp_init'));
+
+        // setup save to handle any custom metas if we have something set
+        add_action('save_post', array($this, 'handle_post_save'));
+    }
+
+    // register the actual post type when WP boots
+    public function handle_wp_init()
+    {
         $labels = static::generate_labels($this->singular, $this->plural);
         $args = array(
             'labels'               => $labels,
@@ -60,13 +68,7 @@ class CustomPostType
         if ($this->menu_icon)
             $args['menu_icon'] = $this->menu_icon;
 
-        // setup the post type itself
-        add_action('init', function() use ($args, $slug) {
-            register_post_type($slug, $args);
-        });
-
-        // setup save to handle any custom metas if we have something set
-        add_action('save_post', array($this, 'handle_post_save'));
+        register_post_type($this->slug, $args);
     }
 
     // called whenever something is posted, lets determine if we want to do anything
