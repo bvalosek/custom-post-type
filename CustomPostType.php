@@ -19,7 +19,7 @@ class CustomPostType
     // allow instantiation without new for cleaner one-off chaining
     public static function factory()
     {
-        return new CustomPostType();
+        return new static();
     }
 
     // generate all the labels for the custom type
@@ -46,7 +46,7 @@ class CustomPostType
     public function create()
     {
         $slug = $this->slug;
-        $labels = CustomPostType::generate_labels($this->singular, $this->plural);
+        $labels = static::generate_labels($this->singular, $this->plural);
         $args = array(
             'labels'               => $labels,
             'description'          => 'All ' . $this->plural,
