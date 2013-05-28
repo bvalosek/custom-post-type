@@ -150,7 +150,7 @@ class CustomPostType
                     name="<?= $slug ?>"
                     value="<?= esc_attr($value) ?>"
                 >
-            <?
+            <?php
         },
         $this->slug,
         $this->location);
