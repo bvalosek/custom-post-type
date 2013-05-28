@@ -61,12 +61,12 @@ class CustomPostType
             $args['menu_icon'] = $this->menu_icon;
 
         // setup the post type itself
-        \add_action('init', function() use ($args, $slug) {
-            \register_post_type($slug, $args);
+        add_action('init', function() use ($args, $slug) {
+            register_post_type($slug, $args);
         });
 
         // setup save to handle any custom metas if we have something set
-        \add_action('save_post', array($this, 'handle_post_save'));
+        add_action('save_post', array($this, 'handle_post_save'));
     }
 
     // called whenever something is posted, lets determine if we want to do anything
@@ -76,7 +76,7 @@ class CustomPostType
         foreach ($this->custom_metas as $meta) {
             foreach ($_POST as $k => $v) {
                 if ($k == $meta['slug']) {
-                    \update_post_meta($post_id, $k, strip_tags($v));
+                    update_post_meta($post_id, $k, strip_tags($v));
                 }
             }
         }
@@ -110,7 +110,7 @@ class CustomPostType
     public function custom_text_meta($title, $slug = NULL)
     {
         // autocreate slug if we need to from the title
-        $slug = $slug ?: \sanitize_title_with_dashes($title);
+        $slug = $slug ?: sanitize_title_with_dashes($title);
 
         $info = array(
             'type'  => 'text',
@@ -140,8 +140,8 @@ class CustomPostType
         $slug  = $info['slug'];
 
         // add the function to draw the meta box on the post edit screen
-        \add_meta_box($info['slug'], $info['label'], function($post) use ($slug) {
-            $value = \get_post_meta($post->ID, $slug, true);
+        add_meta_box($info['slug'], $info['label'], function($post) use ($slug) {
+            $value = get_post_meta($post->ID, $slug, true);
             ?>
                 <input
                     style="width: 100%"
