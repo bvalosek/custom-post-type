@@ -12,6 +12,10 @@ class CustomPostType
     protected $is_public = true;
     protected $supports = array('title', 'editor', 'thumbnail');
     protected $location = 'side';
+    protected $columns = array(
+        'cb' => '<input type="checkbox">',
+        'title' => 'Title'
+    );
 
     protected $custom_metas = array();
 
@@ -41,6 +45,13 @@ class CustomPostType
         );
     }
 
+    // specify custom columns
+    public function columns($cols)
+    {
+        foreach ($cols as $col) {
+        }
+    }
+
     // actually execute all the stuff we've found
     public function create()
     {
@@ -49,6 +60,42 @@ class CustomPostType
 
         // setup save to handle any custom metas if we have something set
         add_action('save_post', array($this, 'handle_post_save'));
+
+        // return the headers of the columns
+        add_action('manage_edit-' . $this->slug . '_columns',
+            array($this, 'get_columns'));
+
+        // handle the display of the column info
+        add_action('manage_' . $this->slug . '_posts_custom_column',
+            array($this, 'handle_columns'), 10, 2);
+    }
+
+    // handle drawing of any of the custom column entries
+    public function handle_columns($col, $post_id)
+    {
+        // see if it's any of our metas
+        $this->handle_meta_column($col, $post_id);
+    }
+
+    // draw any of the column info that we created via custom meta
+    protected function handle_meta_column($col, $post_id)
+    {
+        foreach ($this->custom_metas as $meta) {
+            if ($meta['slug'] == $col) {
+                echo get_post_meta($post_id, $col, true);
+            }
+        }
+    }
+
+    // the array of column header names/slugs
+    public function get_columns()
+    {
+        // copy array and append date
+        $cols = $this->columns;
+        $cols['date'] = 'Last Updated';
+
+        // pad with date at the end always
+        return $cols;
     }
 
     // register the actual post type when WP boots
@@ -109,7 +156,7 @@ class CustomPostType
         return $this;
     }
 
-    public function custom_text_meta($title, $slug = NULL)
+    public function custom_text_meta($title, $slug = NULL, $show_column = false)
     {
         // autocreate slug if we need to from the title
         $slug = $slug ?: sanitize_title_with_dashes($title);
@@ -119,6 +166,11 @@ class CustomPostType
             'label' => $title,
             'slug'  => $slug
         );
+
+        // should we add stuff to the column flow?
+        if ($show_column) {
+            $this->columns[$slug] = $title;
+        }
 
         array_push($this->custom_metas, $info);
         return $this;
